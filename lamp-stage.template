@@ -75,6 +75,9 @@
         },
         "LampStage": {
             "Properties": {
+                "IamInstanceProfile": {
+                    "Ref": "InstanceProfile"
+                },
                 "ImageId": "ami-08d489468314a58df",
                 "InstanceType": "t2.micro",
                 "KeyName": {

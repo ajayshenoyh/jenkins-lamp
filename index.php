@@ -9,5 +9,6 @@
         $welcome = new Welcome();
     ?>
     <h1><?php echo $welcome->greet()?></h1>
+    <h2> Check the CI/CD with Jenkins and CodeDeploy</h2>
 </body>
 </html>
