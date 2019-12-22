@@ -30,16 +30,34 @@ instance.InstanceType="t2.micro"
 instance.SecurityGroups=[Ref(sg)]
 instance.KeyName = Ref(keypair)
 
-principale = Principal("Service", ["ec2.amazonaws.com"])
-statement = Statement(Effect=Allow, Action=[AssumeRole], Principal=principale)
+# Create the role 
+principal = Principal("Service",["ec2.amazonaws.com"])
+statement = Statement(Effect=Allow,Action=[AssumeRole],Principal=principal)
 policy = Policy(Statement=[statement])
-role = Role("Role", AssumeRolePolicyDocument=policy)
-
+role = Role("Role",AssumeRolePolicyDocument=policy)
 t.add_resource(role)
+t.add_resource(
+    InstanceProfile(
+        "InstanceProfile",
+        Path="/",
+        Roles=[Ref("Role")]
+    )
+)
 
-t.add_resource(InstanceProfile("InstanceProfile", Path="/", Roles=[Ref("Role")]))
-
-t.add_resource(IAMPolicy("Policy",PolicyName="AllowS3",PolicyDocument=Policy(Statement=[Statement(Effect=Allow,Action=[Action("s3","*")],Resource=["*"])]),Roles=[Ref("Role")]))
+t.add_resource(IAMPolicy(
+    "Policy",
+    PolicyName = "AllowS3",
+    PolicyDocument=Policy(
+        Statement=[
+            Statement(
+                Effect=Allow, Action=[Action("s3","*")],
+                Resource=["*"]
+                )
+            ]
+        ),
+        Roles=[Ref("Role")]
+    ))
+    
 instance.IamInstanceProfile = Ref("InstanceProfile")
 
 t.add_resource(instance)
